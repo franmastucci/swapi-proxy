@@ -1,4 +1,4 @@
-package com.swapi.app.proxy.controller.service;
+package com.swapi.app.proxy.service;
 
 import com.swapi.app.proxy.dto.FilmResponse;
 import com.swapi.app.proxy.dto.PersonInfoResponse;
@@ -8,8 +8,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class PersonService {
@@ -25,6 +27,9 @@ public class PersonService {
 
     @Autowired
     private FilmService filmService;
+
+    @Autowired
+    private PlanetService planetService;
 
 
     @Cacheable("person-info")
@@ -53,13 +58,13 @@ public class PersonService {
 
     }
 
-    private List<FilmResponse> getFilms(Person responseBody) {
+    private List<FilmResponse> getFilms(Person personInfo) {
 
         FilmList swapiFilmList = filmService.getFilms();
 
         List<FilmResponse> filmsInfoResponse = new ArrayList<>();
 
-        responseBody.getFilms()
+        personInfo.getFilms()
                 .stream().forEach(f -> {
                     swapiFilmList.getResults().stream().forEach(g -> {
                         if(g.getUrl().equals(f)) {
@@ -89,23 +94,26 @@ public class PersonService {
 
     private String compareFastestSpeeds(Optional<Vehicle> vehicleWithMaxSpeed, Optional<Starship> starshipWithMaxSpeed) {
 
-        if (null != starshipWithMaxSpeed && null != vehicleWithMaxSpeed) {
+        vehicleWithMaxSpeed = vehicleWithMaxSpeed == null
+                ? Optional.of(Vehicle.builder().max_atmosphering_speed("0").build())
+                : vehicleWithMaxSpeed;
 
-            int starshipSpeed = Integer.parseInt(starshipWithMaxSpeed.get().getMax_atmosphering_speed());
-            int vehicleSpeed = Integer.parseInt(vehicleWithMaxSpeed.get().getMax_atmosphering_speed());
+        starshipWithMaxSpeed = starshipWithMaxSpeed == null
+                ? Optional.of(Starship.builder().max_atmosphering_speed("0").build())
+                : starshipWithMaxSpeed;
 
-            if (starshipSpeed > vehicleSpeed) return starshipWithMaxSpeed.get().getName();
-            else return vehicleWithMaxSpeed.get().getName();
+        return Stream.of(starshipWithMaxSpeed, vehicleWithMaxSpeed)
+                .filter(Optional::isPresent)
+                .max(Comparator.comparingInt(transport ->
+                        Integer.parseInt(transport.get().getMax_atmosphering_speed())))
+                .map(Optional::get)
+                .map(transport -> transport.getName())
+                .orElse(null);
 
-        } else if (null != starshipWithMaxSpeed) return starshipWithMaxSpeed.get().getName();
-
-        else if (null != vehicleWithMaxSpeed) return vehicleWithMaxSpeed.get().getName();
-
-        else return null;
     }
 
-    private String getPlanetName(Person responseBody) {
-        return swapiProxyService.getPlanet(responseBody.getHomeworld()).getName();
+    private String getPlanetName(Person personInfo) {
+        return planetService.getPlanet(personInfo.getHomeworld()).getName();
     }
 
 }

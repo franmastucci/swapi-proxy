@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public  class Starship implements Transport {
+public class Starship implements Transport {
 
     private String name;
     private String model;

@@ -1,4 +1,4 @@
-package com.swapi.app.proxy.controller.service;
+package com.swapi.app.proxy.service;
 
 import com.swapi.app.proxy.entity.FilmList;
 import org.springframework.beans.factory.annotation.Autowired;

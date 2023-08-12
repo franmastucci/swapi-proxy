@@ -1,4 +1,4 @@
-package com.swapi.app.proxy.controller.service;
+package com.swapi.app.proxy.service;
 
 import com.swapi.app.proxy.entity.Person;
 import com.swapi.app.proxy.entity.Transport;
@@ -23,4 +23,5 @@ public abstract class TransportService<T extends Transport> {
         return transportWithMaxSpeed;
 
     }
+
 }

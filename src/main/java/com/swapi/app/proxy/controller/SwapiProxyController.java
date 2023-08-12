@@ -1,7 +1,7 @@
 package  com.swapi.app.proxy.controller;
 import com.swapi.app.proxy.dto.PersonInfoResponse;
-import com.swapi.app.proxy.controller.service.SwapiProxyService;
-import com.swapi.app.proxy.controller.service.PersonService;
+import com.swapi.app.proxy.service.SwapiProxyService;
+import com.swapi.app.proxy.service.PersonService;
 import jakarta.websocket.server.PathParam;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
