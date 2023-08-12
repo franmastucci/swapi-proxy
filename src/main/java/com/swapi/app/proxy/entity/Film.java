@@ -1,4 +1,4 @@
-package com.swapi.app.proxy.dto.swapi;
+package com.swapi.app.proxy.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class FilmApiResponse {
+public class Film {
+
     private List<String> characters;
     private String created;
     private String director;

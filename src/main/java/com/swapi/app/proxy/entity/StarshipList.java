@@ -1,5 +1,4 @@
-package com.swapi.app.proxy.dto.swapi;
-
+package com.swapi.app.proxy.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,10 +11,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PlanetListApiResponse {
+public class StarshipList {
+
     private int count;
     private String next;
     private String previous;
-    private List<PlanetApiResponse> results;
+    private List<Starship> results;
 
 }
