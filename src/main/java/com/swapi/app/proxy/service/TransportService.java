@@ -30,7 +30,7 @@ public abstract class TransportService<T extends Transport> {
 
         } catch (Exception e) {
             log.error("unexpected error calculating the fastest transport. Stack trace: {}", e.getStackTrace());
-            throw new InternalProxyException("unexpected error calculating the fastest transport " + e.getMessage());
+            throw new InternalProxyException("unexpected error calculating the fastest transport");
         }
 
     }

@@ -60,7 +60,7 @@ public class SwapiProxyService {
 
         } catch (Exception e) {
             log.error("unexpected error getting data from Swapi. Stack Trace: " + e.getStackTrace());
-            throw new InternalProxyException("unexpected error getting data from Swapi " + e.getMessage());
+            throw new InternalProxyException("unexpected error getting data from Swapi");
         }
 
     }

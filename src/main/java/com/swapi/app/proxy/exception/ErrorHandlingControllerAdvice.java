@@ -15,28 +15,20 @@ class ErrorHandlingControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     ErrorResponse onNotFoundException(NotFoundException e){
-
         return  ErrorResponse.builder()
                 .msg(e.getMessage())
                 .code(HttpStatus.NOT_FOUND.value())
                 .build();
-
     }
 
     @ExceptionHandler(InternalProxyException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     ErrorResponse onInternalxception(InternalProxyException e){
-
         return  ErrorResponse.builder()
-                .msg("Internal Proxy Error")
+                .msg(e.getMessage())
                 .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .build();
-
     }
-
-
-
-
 
 }

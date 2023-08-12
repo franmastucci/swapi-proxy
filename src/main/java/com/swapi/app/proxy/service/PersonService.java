@@ -85,7 +85,7 @@ public class PersonService {
 
         } catch (Exception e) {
             log.error("unexpected error matching films. Stack Trace: " + e.getStackTrace());
-            throw new InternalProxyException("unexpected error matching films.");
+            throw new InternalProxyException("unexpected error matching films");
         }
 
     }
@@ -104,15 +104,15 @@ public class PersonService {
 
     private String compareFastestSpeeds(Optional<Vehicle> vehicleWithMaxSpeed, Optional<Starship> starshipWithMaxSpeed) {
 
+        vehicleWithMaxSpeed = vehicleWithMaxSpeed == null
+                ? Optional.of(Vehicle.builder().max_atmosphering_speed("0").build())
+                : vehicleWithMaxSpeed;
+
+        starshipWithMaxSpeed = starshipWithMaxSpeed == null
+                ? Optional.of(Starship.builder().max_atmosphering_speed("0").build())
+                : starshipWithMaxSpeed;
+
         try{
-            vehicleWithMaxSpeed = vehicleWithMaxSpeed == null
-                    ? Optional.of(Vehicle.builder().max_atmosphering_speed("0").build())
-                    : vehicleWithMaxSpeed;
-
-            starshipWithMaxSpeed = starshipWithMaxSpeed == null
-                    ? Optional.of(Starship.builder().max_atmosphering_speed("0").build())
-                    : starshipWithMaxSpeed;
-
             return Stream.of(starshipWithMaxSpeed, vehicleWithMaxSpeed)
                     .filter(Optional::isPresent)
                     .max(Comparator.comparingInt(transport ->
