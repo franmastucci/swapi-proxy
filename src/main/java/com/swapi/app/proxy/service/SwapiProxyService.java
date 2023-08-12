@@ -25,36 +25,16 @@ public class SwapiProxyService {
     @Cacheable("person-info")
     public PersonInfoResponse getPersonInfo(String name) {
 
-        PersonInfoApiResponse personInfo =
-                getPersonInfoApiResponseEntity(name, contextService.getPeople());
+        PersonInfoListApiResponse personInfo =
+                contextService.getPeopleByName(name);
 
-        if (personInfo == null)
-            throw new RuntimeException("Not Found");
+        if (!personInfo.getResults().isEmpty())
+            return buildPersonInfoResponse(personInfo.getResults().get(0));
 
-        return buildPersonInfoResponse(personInfo);
+        else throw new RuntimeException("Not Found");
 
     }
 
-    private PersonInfoApiResponse getPersonInfoApiResponseEntity(String name, PersonInfoListApiResponse peopleList) {
-
-        boolean haveNextPage = null != peopleList.getNext();
-
-        PersonInfoApiResponse personInfo = peopleList.getResults().stream()
-                .filter(p -> p.getName().equals(name))
-                .findFirst()
-                .orElse(null);
-
-        if (personInfo == null && haveNextPage) {
-            PersonInfoApiResponse recursiveResult =
-                    getPersonInfoApiResponseEntity(name, contextService.getPeople(peopleList.getNext()));
-
-            if (recursiveResult != null)
-                return recursiveResult;
-
-        }
-
-        return personInfo;
-    }
     private PersonInfoResponse buildPersonInfoResponse(PersonInfoApiResponse personInfo) {
 
         return PersonInfoResponse.builder()
@@ -62,7 +42,7 @@ public class SwapiProxyService {
                 .birthYear(personInfo.getBirth_year())
                 .gender(personInfo.getGender())
                 .planetName(getPlanetName(personInfo))
-                .fastestVehicleDriven(getVehicleWithMaxSpeed(personInfo))
+                .fastestVehicleDriven(getFastestVehicleDriven(personInfo))
                 .films(getFilms(personInfo))
                 .build();
 
@@ -90,27 +70,66 @@ public class SwapiProxyService {
 
     }
 
-    private String getVehicleWithMaxSpeed(PersonInfoApiResponse responseBody) {
+    private String getFastestVehicleDriven(PersonInfoApiResponse personInfo) {
 
-        List<VehicleApiResponse> vehiclesInfo = contextService.getVehicles().getResults();
+        Optional<VehicleApiResponse> vehicleWithMaxSpeed = calculateFastestVehicleDriven(personInfo);
 
-        List<VehicleApiResponse> filteredVehiclesInfo = new ArrayList<>();
+        Optional<StarshipApiResponse> starshipWithMaxSpeed = calculateFastestStarshipDriven(personInfo);
 
-        responseBody.getVehicles()
-                .stream().forEach(v -> {
+        return compareFastestSpeeds(vehicleWithMaxSpeed, starshipWithMaxSpeed);
 
-                    vehiclesInfo.stream().forEach(w -> {
-                        if(w.getUrl().equals(v))
-                            filteredVehiclesInfo.add(w);
+    }
+
+    private Optional<StarshipApiResponse> calculateFastestStarshipDriven(PersonInfoApiResponse personInfo) {
+
+        List<StarshipApiResponse> starshipInfo = new ArrayList<>();
+        Optional<StarshipApiResponse> starshipWithMaxSpeed = null;
+
+        if(!personInfo.getStarships().isEmpty()) {
+            personInfo.getStarships()
+                    .stream().forEach(s -> {
+                        starshipInfo.add(contextService.getStarship(s));
                     });
-                });
 
-        Optional<VehicleApiResponse> vehicleWithMaxSpeed = filteredVehiclesInfo.stream()
-                .max(Comparator.comparingInt(veh -> Integer.parseInt(veh.getMax_atmosphering_speed())));
+            starshipWithMaxSpeed = starshipInfo.stream()
+                    .max(Comparator.comparingInt(sta -> Integer.parseInt(sta.getMax_atmosphering_speed())));
 
-        if(vehicleWithMaxSpeed.isEmpty()) return null;
-        return vehicleWithMaxSpeed.get().getName();
+        }
+        return starshipWithMaxSpeed;
+    }
 
+    private Optional<VehicleApiResponse> calculateFastestVehicleDriven(PersonInfoApiResponse personInfo) {
+
+        List<VehicleApiResponse> vehiclesInfo = new ArrayList<>();
+        Optional<VehicleApiResponse> vehicleWithMaxSpeed = null;
+
+        if(!personInfo.getVehicles().isEmpty()) {
+            personInfo.getVehicles()
+                    .stream().forEach(v -> {
+                        vehiclesInfo.add(contextService.getVehicle(v));
+                    });
+
+            vehicleWithMaxSpeed = vehiclesInfo.stream()
+                    .max(Comparator.comparingInt(veh -> Integer.parseInt(veh.getMax_atmosphering_speed())));
+        }
+        return vehicleWithMaxSpeed;
+    }
+
+    private String compareFastestSpeeds(Optional<VehicleApiResponse> vehicleWithMaxSpeed, Optional<StarshipApiResponse> starshipWithMaxSpeed) {
+
+        if (null != starshipWithMaxSpeed && null != vehicleWithMaxSpeed) {
+
+            int starshipSpeed = Integer.parseInt(starshipWithMaxSpeed.get().getMax_atmosphering_speed());
+            int vehicleSpeed = Integer.parseInt(vehicleWithMaxSpeed.get().getMax_atmosphering_speed());
+
+            if (starshipSpeed > vehicleSpeed) return starshipWithMaxSpeed.get().getName();
+            else return vehicleWithMaxSpeed.get().getName();
+
+        } else if (null != starshipWithMaxSpeed) return starshipWithMaxSpeed.get().getName();
+
+        else if (null != vehicleWithMaxSpeed) return vehicleWithMaxSpeed.get().getName();
+
+        else return null;
     }
 
     private String getPlanetName(PersonInfoApiResponse responseBody) {
@@ -119,6 +138,29 @@ public class SwapiProxyService {
                 .filter(p -> p.getUrl().equals(responseBody.getHomeworld()))
                 .findFirst().get().getName();
 
+    }
+
+    private PersonInfoApiResponse getPersonInfoApiResponseEntity(String name, PersonInfoListApiResponse peopleList) {
+
+        boolean haveNextPage = null != peopleList.getNext();
+
+        PersonInfoApiResponse personInfo = peopleList.getResults().stream()
+                .filter(p -> p.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+/*
+        if (personInfo == null && haveNextPage) {
+            PersonInfoApiResponse recursiveResult =
+                    getPersonInfoApiResponseEntity(name, contextService.getPeople(peopleList.getNext()));
+
+            if (recursiveResult != null)
+                return recursiveResult;
+
+        }
+
+
+ */
+        return personInfo;
     }
 
 }

@@ -29,11 +29,11 @@ public class SwapiProxyController {
     @GetMapping(path = "/worlds")
     public HttpStatus loadWorlds() {
         contextService.getFilms();
-        contextService.getPeople();
+        //contextService.getPeople();
         contextService.getPlanets();
         contextService.getSpecies();
-        contextService.getStarships();
-        contextService.getVehicles();
+        //contextService.getStarships();
+        //contextService.getVehicles();
         return HttpStatus.OK;
     }
 
