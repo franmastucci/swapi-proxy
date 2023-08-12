@@ -7,8 +7,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlanetService {
 
+    SwapiProxyService swapiProxyService;
+
     @Autowired
-    private SwapiProxyService swapiProxyService;
+    public PlanetService(SwapiProxyService swapiProxyService) {
+        this.swapiProxyService = swapiProxyService;
+    }
 
     public Planet getPlanet(String url) {
         return swapiProxyService.getPlanet(url);

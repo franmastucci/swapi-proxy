@@ -11,9 +11,12 @@ import java.util.List;
 @Service
 public class StarshipService extends TransportService<Starship> {
 
-    @Autowired
-    private SwapiProxyService swapiProxyService;
+    SwapiProxyService swapiProxyService;
 
+    @Autowired
+    public StarshipService(SwapiProxyService swapiProxyService) {
+        this.swapiProxyService = swapiProxyService;
+    }
     @Override
     protected List<Starship> getTransportInfo(Person personInfo) {
 

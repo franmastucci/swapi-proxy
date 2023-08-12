@@ -11,11 +11,15 @@ import java.util.List;
 @Service
 public class VehicleService extends TransportService<Vehicle> {
 
+    SwapiProxyService swapiProxyService;
+
     @Autowired
-    private SwapiProxyService swapiProxyService;
+    public VehicleService(SwapiProxyService swapiProxyService) {
+        this.swapiProxyService = swapiProxyService;
+    }
 
     @Override
-    protected List<Vehicle> getTransportInfo(Person personInfo) {
+    public List<Vehicle> getTransportInfo(Person personInfo) {
         List<Vehicle> vehiclesInfo = new ArrayList<>();
 
         if (!personInfo.getVehicles().isEmpty()) {

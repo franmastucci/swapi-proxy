@@ -20,20 +20,26 @@ import java.util.stream.Stream;
 @Log4j2
 public class PersonService {
 
-    @Autowired
-    private SwapiProxyService swapiProxyService;
+    private final SwapiProxyService swapiProxyService;
+    private final StarshipService starshipService;
+    private final VehicleService vehicleService;
+    private final FilmService filmService;
+    private final PlanetService planetService;
 
     @Autowired
-    private StarshipService starshipService;
-
-    @Autowired
-    private VehicleService vehicleService;
-
-    @Autowired
-    private FilmService filmService;
-
-    @Autowired
-    private PlanetService planetService;
+    public PersonService(
+            SwapiProxyService swapiProxyService,
+            StarshipService starshipService,
+            VehicleService vehicleService,
+            FilmService filmService,
+            PlanetService planetService
+    ) {
+        this.swapiProxyService = swapiProxyService;
+        this.starshipService = starshipService;
+        this.vehicleService = vehicleService;
+        this.filmService = filmService;
+        this.planetService = planetService;
+    }
 
 
     @Cacheable("person-info")
