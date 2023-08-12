@@ -18,36 +18,14 @@ public class ContextService {
     @Value("${external-api-swapi-films}")
     private String swapiFilmsUrl;
 
-    @Value("${external-api-swapi-people}")
-    private String swapiPeopleUrl;
-
     @Value("${external-api-swapi-people-by-name}")
     private String swapiPeopleByIdUrl;
-
-    @Value("${external-api-swapi-planets}")
-    private String swapiPlanetsUrl;
-
-    @Value("${external-api-swapi-species}")
-    private String swapiSpeciesUrl;
-
-    @Value("${external-api-swapi-starships}")
-    private String swapiStarshipssUrl;
-
-    @Value("${external-api-swapi-vehicles}")
-    private String swapiVehiclessUrl;
 
 
     @Cacheable("films-swapi")
     public FilmListApiResponse getFilms() {
         return getInfoFromSwapi(swapiFilmsUrl, FilmListApiResponse.class).getBody();
     }
-
-    /*
-    @Cacheable("people-swapi")
-    public PersonInfoListApiResponse getPeople() {
-        return getInfoFromSwapi(swapiPeopleUrl, PersonInfoListApiResponse.class).getBody();
-    }
-    */
 
     @Cacheable("people-by-name-swapi")
     public PersonInfoListApiResponse getPeopleByName(String name) {
@@ -59,17 +37,12 @@ public class ContextService {
         return getInfoFromSwapi(url, PlanetApiResponse.class).getBody();
     }
 
-    @Cacheable("species-swapi")
-    public SpeciesListApiResponse getSpecies() {
-        return getInfoFromSwapi(swapiSpeciesUrl, SpeciesListApiResponse.class).getBody();
-    }
-
-    @Cacheable("starships-swapi")
+    @Cacheable("starship-swapi")
     public StarshipApiResponse getStarship(String url) {
         return getInfoFromSwapi(url, StarshipApiResponse.class).getBody();
     }
 
-    @Cacheable("vehicles-swapi")
+    @Cacheable("vehicle-swapi")
     public VehicleApiResponse getVehicle(String url) {
         return getInfoFromSwapi(url, VehicleApiResponse.class).getBody();
     }

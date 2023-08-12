@@ -133,32 +133,7 @@ public class SwapiProxyService {
     }
 
     private String getPlanetName(PersonInfoApiResponse responseBody) {
-
         return contextService.getPlanet(responseBody.getHomeworld()).getName();
-
-    }
-
-    private PersonInfoApiResponse getPersonInfoApiResponseEntity(String name, PersonInfoListApiResponse peopleList) {
-
-        boolean haveNextPage = null != peopleList.getNext();
-
-        PersonInfoApiResponse personInfo = peopleList.getResults().stream()
-                .filter(p -> p.getName().equals(name))
-                .findFirst()
-                .orElse(null);
-/*
-        if (personInfo == null && haveNextPage) {
-            PersonInfoApiResponse recursiveResult =
-                    getPersonInfoApiResponseEntity(name, contextService.getPeople(peopleList.getNext()));
-
-            if (recursiveResult != null)
-                return recursiveResult;
-
-        }
-
-
- */
-        return personInfo;
     }
 
 }
