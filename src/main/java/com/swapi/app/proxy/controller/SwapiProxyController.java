@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Log4j2
-@RequestMapping("/swapi-proxy")
 public class SwapiProxyController {
 
     @Autowired
