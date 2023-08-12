@@ -54,9 +54,9 @@ public class ContextService {
         return getInfoFromSwapi(swapiPeopleByIdUrl + name, PersonInfoListApiResponse.class).getBody();
     }
 
-    @Cacheable("planets-swapi")
-    public PlanetListApiResponse getPlanets() {
-        return getInfoFromSwapi(swapiPlanetsUrl, PlanetListApiResponse.class).getBody();
+    @Cacheable("planet-swapi")
+    public PlanetApiResponse getPlanet(String url) {
+        return getInfoFromSwapi(url, PlanetApiResponse.class).getBody();
     }
 
     @Cacheable("species-swapi")

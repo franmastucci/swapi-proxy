@@ -30,7 +30,7 @@ public class SwapiProxyController {
     public HttpStatus loadWorlds() {
         contextService.getFilms();
         //contextService.getPeople();
-        contextService.getPlanets();
+        //contextService.getPlanets();
         contextService.getSpecies();
         //contextService.getStarships();
         //contextService.getVehicles();

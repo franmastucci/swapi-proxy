@@ -134,9 +134,7 @@ public class SwapiProxyService {
 
     private String getPlanetName(PersonInfoApiResponse responseBody) {
 
-        return contextService.getPlanets().getResults().stream()
-                .filter(p -> p.getUrl().equals(responseBody.getHomeworld()))
-                .findFirst().get().getName();
+        return contextService.getPlanet(responseBody.getHomeworld()).getName();
 
     }
 
