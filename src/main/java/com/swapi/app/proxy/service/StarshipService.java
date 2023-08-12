@@ -16,10 +16,15 @@ public class StarshipService extends TransportService<Starship> {
 
     @Override
     protected List<Starship> getTransportInfo(Person personInfo) {
+
         List<Starship> starshipInfo = new ArrayList<>();
-        personInfo.getStarships().forEach(s -> {
-            starshipInfo.add(swapiProxyService.getStarship(s));
-        });
+
+        if (!personInfo.getStarships().isEmpty()) {
+            personInfo.getStarships().forEach(s -> {
+                starshipInfo.add(swapiProxyService.getStarship(s));
+            });
+        }
+
         return starshipInfo;
     }
 

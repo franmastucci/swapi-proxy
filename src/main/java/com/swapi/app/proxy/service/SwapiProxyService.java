@@ -1,6 +1,8 @@
 package com.swapi.app.proxy.service;
 
 import com.swapi.app.proxy.entity.*;
+import com.swapi.app.proxy.exception.InternalProxyException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
+@Log4j2
 public class SwapiProxyService {
 
     @Autowired
@@ -47,11 +50,19 @@ public class SwapiProxyService {
     }
 
     public <T> ResponseEntity<T> getDataFromSwapi(String uri, Class<T> responseType) {
-        return webClient.get()
-                .uri(uri)
-                .retrieve()
-                .toEntity(responseType)
-                .block();
+
+        try {
+            return webClient.get()
+                    .uri(uri)
+                    .retrieve()
+                    .toEntity(responseType)
+                    .block();
+
+        } catch (Exception e) {
+            log.error("unexpected error getting data from Swapi. Stack Trace: " + e.getStackTrace());
+            throw new InternalProxyException("unexpected error getting data from Swapi " + e.getMessage());
+        }
+
     }
 
 }

@@ -26,4 +26,5 @@ public class VehicleService extends TransportService<Vehicle> {
 
         return vehiclesInfo;
     }
+
 }

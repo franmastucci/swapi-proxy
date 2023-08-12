@@ -3,6 +3,9 @@ package com.swapi.app.proxy.service;
 import com.swapi.app.proxy.dto.FilmResponse;
 import com.swapi.app.proxy.dto.PersonInfoResponse;
 import com.swapi.app.proxy.entity.*;
+import com.swapi.app.proxy.exception.InternalProxyException;
+import com.swapi.app.proxy.exception.NotFoundException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
+@Log4j2
 public class PersonService {
 
     @Autowired
@@ -41,7 +45,7 @@ public class PersonService {
         if (!personInfo.getResults().isEmpty())
             return buildPersonInfoResponse(personInfo.getResults().get(0));
 
-        else throw new RuntimeException("Not Found");
+        else throw new NotFoundException("Person Not Found");
 
     }
 
@@ -64,19 +68,25 @@ public class PersonService {
 
         List<FilmResponse> filmsInfoResponse = new ArrayList<>();
 
-        personInfo.getFilms()
-                .stream().forEach(f -> {
-                    swapiFilmList.getResults().stream().forEach(g -> {
-                        if(g.getUrl().equals(f)) {
-                            filmsInfoResponse.add(FilmResponse.builder()
-                                    .name(g.getTitle())
-                                    .releaseDate(g.getRelease_date())
-                                    .build());
-                        }
+        try {
+            personInfo.getFilms()
+                    .stream().forEach(f -> {
+                        swapiFilmList.getResults().stream().forEach(g -> {
+                            if(g.getUrl().equals(f)) {
+                                filmsInfoResponse.add(FilmResponse.builder()
+                                        .name(g.getTitle())
+                                        .releaseDate(g.getRelease_date())
+                                        .build());
+                            }
+                        });
                     });
-                });
 
-        return filmsInfoResponse;
+            return filmsInfoResponse;
+
+        } catch (Exception e) {
+            log.error("unexpected error matching films. Stack Trace: " + e.getStackTrace());
+            throw new InternalProxyException("unexpected error matching films.");
+        }
 
     }
 
@@ -94,21 +104,27 @@ public class PersonService {
 
     private String compareFastestSpeeds(Optional<Vehicle> vehicleWithMaxSpeed, Optional<Starship> starshipWithMaxSpeed) {
 
-        vehicleWithMaxSpeed = vehicleWithMaxSpeed == null
-                ? Optional.of(Vehicle.builder().max_atmosphering_speed("0").build())
-                : vehicleWithMaxSpeed;
+        try{
+            vehicleWithMaxSpeed = vehicleWithMaxSpeed == null
+                    ? Optional.of(Vehicle.builder().max_atmosphering_speed("0").build())
+                    : vehicleWithMaxSpeed;
 
-        starshipWithMaxSpeed = starshipWithMaxSpeed == null
-                ? Optional.of(Starship.builder().max_atmosphering_speed("0").build())
-                : starshipWithMaxSpeed;
+            starshipWithMaxSpeed = starshipWithMaxSpeed == null
+                    ? Optional.of(Starship.builder().max_atmosphering_speed("0").build())
+                    : starshipWithMaxSpeed;
 
-        return Stream.of(starshipWithMaxSpeed, vehicleWithMaxSpeed)
-                .filter(Optional::isPresent)
-                .max(Comparator.comparingInt(transport ->
-                        Integer.parseInt(transport.get().getMax_atmosphering_speed())))
-                .map(Optional::get)
-                .map(transport -> transport.getName())
-                .orElse(null);
+            return Stream.of(starshipWithMaxSpeed, vehicleWithMaxSpeed)
+                    .filter(Optional::isPresent)
+                    .max(Comparator.comparingInt(transport ->
+                            Integer.parseInt(transport.get().getMax_atmosphering_speed())))
+                    .map(Optional::get)
+                    .map(transport -> transport.getName())
+                    .orElse(null);
+
+        } catch (Exception e) {
+            log.error("unexpected error comparing fastest transport speeds");
+            throw new InternalProxyException("unexpected error comparing fastest transports");
+        }
 
     }
 
