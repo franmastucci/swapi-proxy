@@ -6,5 +6,3 @@ external-api-swapi-films: ${external-api-swapi-base-url}/films
 server:
   servlet:
     context-path: /swapi-proxy
-
-

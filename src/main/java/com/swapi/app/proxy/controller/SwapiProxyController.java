@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
 @RestController
-@Tag(name = "init", description = "Resource for preloading SWAPI data to optimize responsiveness.")
+@Tag(name = "Init", description = "Resource for preloading SWAPI data to optimize responsiveness.")
 public class SwapiProxyController {
 
     @Autowired

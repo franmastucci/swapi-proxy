@@ -18,7 +18,7 @@ public class SwaggerConfig {
                                 + " types of data related to the Star Wars universe.</h4>")
                 .version("Spring Boot 3.1.2")
                 .contact(new Contact()
-                        .name("Francisco Mastucci")
+                        .name("Francisco Mastucci Silva")
                         .email("franmastucci@gmail.com")
                         .url("https://github.com/franmastucci/swapi-proxy")));
     }

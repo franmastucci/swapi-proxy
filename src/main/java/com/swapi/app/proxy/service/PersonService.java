@@ -157,7 +157,8 @@ public class PersonService {
      * @throws InternalProxyException If an unexpected error occurs while comparing the fastest transport speeds.
      */
 
-    private String compareFastestSpeeds(Optional<Vehicle> vehicleWithMaxSpeed, Optional<Starship> starshipWithMaxSpeed) {
+    private String compareFastestSpeeds(Optional<Vehicle> vehicleWithMaxSpeed,
+                                        Optional<Starship> starshipWithMaxSpeed) {
 
         vehicleWithMaxSpeed = vehicleWithMaxSpeed == null
                 ? Optional.of(Vehicle.builder().max_atmosphering_speed("0").build())
