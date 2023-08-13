@@ -19,8 +19,8 @@ Once you've executed the necessary commands and have the project up and running,
 #### API Endpoints
 | Path                                                                                                           | Type  | Description                                                 |
 |:---------------------------------------------------------------------------------------------------------------|:------|:------------------------------------------------------------|
-| /swapi-proxy/init                                                                                              | POST  | Initializes data loading of films                           |
-| /swapi-proxy/person-info?name={person_name}                                                                    | POST  | Retrieves information about a person by their name.         |
+| /swapi-proxy/init                                                                                              |  GET  | Initializes data loading of films                           |
+| /swapi-proxy/person-info?name={person_name}                                                                    |  GET  | Retrieves information about a person by their name.         |
 
 
 #### Invoking the init service:
