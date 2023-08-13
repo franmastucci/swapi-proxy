@@ -41,6 +41,13 @@ public class PersonService {
         this.planetService = planetService;
     }
 
+    /**
+     * Retrieves information about a person by their name.
+     *
+     * @param name The name of the person to retrieve information for.
+     * @return The PersonInfoResponse containing information about the person.
+     * @throws NotFoundException If the person is not found.
+     */
 
     @Cacheable("person-info")
     public PersonInfoResponse getPersonInfo(String name) {
@@ -62,11 +69,20 @@ public class PersonService {
                 .birthYear(personInfo.getBirth_year())
                 .gender(personInfo.getGender())
                 .planetName(getPlanetName(personInfo))
-                .fastestVehicleDriven(getFastestVehicleDriven(personInfo))
+                .fastestVehicleDriven(getFastestTransportDriven(personInfo))
                 .films(getFilms(personInfo))
                 .build();
 
     }
+
+    /**
+     * Load all films at once instead of making excessive REST requests to retrieve individual films.
+     * Retrieves a list of FilmResponse objects based on the films associated with a person.
+     *
+     * @param personInfo The Person object containing information about the person.
+     * @return A list of FilmResponse objects representing films associated with the person.
+     * @throws InternalProxyException If an unexpected error occurs while matching films.
+     */
 
     private List<FilmResponse> getFilms(Person personInfo) {
 
@@ -96,7 +112,15 @@ public class PersonService {
 
     }
 
-    private String getFastestVehicleDriven(Person personInfo) {
+    /**
+     * Gets the name of the fastest transport (vehicles & starships) driven by the person.
+     *
+     * @param personInfo The person to determine the fastest vehicle driven.
+     * @return The name of the fastest transport driven by the person, or null if no transport is found.
+     * @throws InternalProxyException If an unexpected error occurs while comparing fastest transport speeds.
+     */
+
+    private String getFastestTransportDriven(Person personInfo) {
 
         Optional<Vehicle> vehicleWithMaxSpeed =
                 vehicleService.calculateFastestTransportByPerson(personInfo);
@@ -107,6 +131,17 @@ public class PersonService {
         return compareFastestSpeeds(vehicleWithMaxSpeed, starshipWithMaxSpeed);
 
     }
+
+    /**
+     * Compares the maximum atmosphering speeds of a vehicle and a starship and returns the name
+     * of the faster transport. This method uses a stream to perform the comparison of maximum atmosphering speeds
+     * between a vehicle and a starship.
+     *
+     * @param vehicleWithMaxSpeed  Optional containing the vehicle with the maximum atmosphering speed, or null .
+     * @param starshipWithMaxSpeed  Optional containing the starship with the maximum atmosphering speed, or null .
+     * @return The name of the faster transport (vehicle or starship), or null if neither is available.
+     * @throws InternalProxyException If an unexpected error occurs while comparing the fastest transport speeds.
+     */
 
     private String compareFastestSpeeds(Optional<Vehicle> vehicleWithMaxSpeed, Optional<Starship> starshipWithMaxSpeed) {
 
