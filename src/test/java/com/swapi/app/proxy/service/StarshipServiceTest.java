@@ -21,7 +21,6 @@ public class StarshipServiceTest {
 
     private StarshipService starshipService;
 
-    private final String STARSHIP_URL = "starshipUri";
 
     @BeforeEach
     public void setUp() {
@@ -33,9 +32,7 @@ public class StarshipServiceTest {
     public void should_return_an_empty_list() {
 
         List<String> starships = new ArrayList<>();
-        Person person = Person.builder()
-                .starships(starships)
-                .build();
+        Person person = Person.builder().starships(starships).build();
 
         List<Starship> result = starshipService.getTransportInfo(person);
 
@@ -47,14 +44,14 @@ public class StarshipServiceTest {
     public void should_return_the_same_uri() {
 
         List<String> starships = new ArrayList<>();
-        starships.add(STARSHIP_URL);
+        starships.add(TestConstants.STARSHIP_URL);
         Person person = Person.builder()
                 .starships(starships)
                 .build();
 
-        when(swapiProxyService.getStarship("starshipUri")).thenReturn(
+        when(swapiProxyService.getStarship(TestConstants.STARSHIP_URL)).thenReturn(
                 Starship.builder()
-                        .url(STARSHIP_URL)
+                        .url(TestConstants.STARSHIP_URL)
                         .build());
 
         List<Starship> result = starshipService.getTransportInfo(person);

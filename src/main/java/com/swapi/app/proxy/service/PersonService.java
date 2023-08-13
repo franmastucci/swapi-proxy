@@ -16,6 +16,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * <h1>Person Service</h1>
+ * Service class responsible for retrieving information about a person from the Star Wars API.
+ * This class utilizes various other services to gather information such as films, planets, starships,
+ * and vehicles associated with the person.<p> <br>
+ *
+ * This service class interacts with the SWAPI (Star Wars API) proxy service to fetch data about a person.
+ * It provides methods to retrieve a person's information, including their name, birth year, gender,
+ * associated planet, fastest driven transport, and films they appeared in.</p> <br>
+ *
+ * @author Francisco Mastucci
+ * @version 1.0
+ * @since 2023-08-13
+ */
+
 @Service
 @Log4j2
 public class PersonService {
@@ -134,8 +149,7 @@ public class PersonService {
 
     /**
      * Compares the maximum atmosphering speeds of a vehicle and a starship and returns the name
-     * of the faster transport. This method uses a stream to perform the comparison of maximum atmosphering speeds
-     * between a vehicle and a starship.
+     * of the faster transport. This method uses a stream to perform the comparison.
      *
      * @param vehicleWithMaxSpeed  Optional containing the vehicle with the maximum atmosphering speed, or null .
      * @param starshipWithMaxSpeed  Optional containing the starship with the maximum atmosphering speed, or null .

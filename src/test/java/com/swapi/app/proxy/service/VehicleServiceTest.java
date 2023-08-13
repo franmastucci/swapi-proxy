@@ -22,7 +22,6 @@ public class VehicleServiceTest {
 
     private VehicleService vehicleService;
 
-    private final String VEHICLE_URL = "vehicleUri";
 
     @BeforeEach
     public void setUp() {
@@ -34,10 +33,7 @@ public class VehicleServiceTest {
     public void should_return_an_empty_list() {
 
         List<String> vehicles = new ArrayList<>();
-
-        Person person = Person.builder()
-                .vehicles(vehicles)
-                .build();
+        Person person = Person.builder().vehicles(vehicles).build();
 
         List<Vehicle> result = vehicleService.getTransportInfo(person);
 
@@ -49,14 +45,12 @@ public class VehicleServiceTest {
     public void should_return_the_same_uri() {
 
         List<String> vehicles = new ArrayList<>();
-        vehicles.add(VEHICLE_URL);
-        Person person = Person.builder()
-                .vehicles(vehicles)
-                .build();
+        vehicles.add(TestConstants.VEHICLE_URL);
+        Person person = Person.builder().vehicles(vehicles).build();
 
-        when(swapiProxyService.getVehicle("vehicleUri")).thenReturn(
+        when(swapiProxyService.getVehicle(TestConstants.VEHICLE_URL)).thenReturn(
                 Vehicle.builder()
-                        .url(VEHICLE_URL)
+                        .url(TestConstants.VEHICLE_URL)
                         .build());
 
         List<Vehicle> result = vehicleService.getTransportInfo(person);
@@ -64,6 +58,5 @@ public class VehicleServiceTest {
         assertEquals(vehicles.get(0), result.get(0).getUrl());
 
     }
-
 
 }

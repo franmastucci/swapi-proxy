@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * <h1>Transport Service</h1>
  * <p>Abstract class that serves as a template method for processing information about vehicles and starships.
- * Classes implementing this template are {@link StarshipService} and {@link VehicleService}.</p>
- *
- * <p>It provides a common structure for calculating the fastest transport based on a person's information.</p>
+ * Classes implementing this template are {@link StarshipService} and {@link VehicleService}.</p> <br>
+ * <p>It provides a common structure for calculating the fastest transport based on a person's information.</p> <br>
  *
  * @param <T> The type of transport entity.
  * @author Francisco Mastucci

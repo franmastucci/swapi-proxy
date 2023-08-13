@@ -12,28 +12,30 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 public class PersonServiceTest {
+
+    private PersonService personService;
 
     @Mock
     private SwapiProxyService swapiProxyService;
 
+    @Mock
     private StarshipService starshipService;
+
+    @Mock
     private VehicleService vehicleService;
+
+    @Mock
     private FilmService filmService;
+
+    @Mock
     private PlanetService planetService;
-    private PersonService personService;
+
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        filmService = mock(FilmService.class);
-        planetService = mock(PlanetService.class);
-        starshipService = mock(StarshipService.class);
-        vehicleService = mock(VehicleService.class);
         personService = new PersonService(
                 swapiProxyService,
                 starshipService,
@@ -43,63 +45,53 @@ public class PersonServiceTest {
         );
     }
     @Test
-    public void testGetPersonInfo_PersonFound() {
+    public void should_return_a_person_info_response() {
 
-        PersonList personList = new PersonList();
-        List<String> vehicles = new ArrayList<>();
-        List<String> filmList = new ArrayList<>();
-        filmList.add("filmUri");
+        Person person = TestUtils.getPerson();
 
-        Person person = Person.builder()
-                .name("Luke Skywalker")
-                .birth_year("19BBY")
-                .gender("male")
-                .vehicles(vehicles)
-                .films(filmList)
-                .homeworld("planetUri")
-                .build();
+        PersonList personList = TestUtils.getPersonList(person);
 
-        personList.setResults(Collections.singletonList(person));
+        Planet planet = TestUtils.getPlanet();
 
-        when(swapiProxyService.getPersonByName("Luke Skywalker")).thenReturn(personList);
+        FilmList filmObjectList = TestUtils.getFilmList();
 
-        Planet planet = new Planet();
-        planet.setName("Tatooine");
-        when(planetService.getPlanet("planetUri")).thenReturn(planet);
+        when(swapiProxyService.getPersonByName(TestConstants.PERSON_NAME))
+                .thenReturn(personList);
 
+        when(planetService.getPlanet(TestConstants.PLANET_URL))
+                .thenReturn(planet);
 
-        when(swapiProxyService.getVehicle("vehicleUri")).thenReturn(
-                Vehicle.builder()
-                        .url("VEHICLE_URL")
-                        .build());
+        when(swapiProxyService.getVehicle(TestConstants.VEHICLE_URL))
+                .thenReturn(Vehicle.builder().url(TestConstants.VEHICLE_URL).build());
 
-        when(vehicleService.calculateFastestTransportByPerson(person)).thenReturn(null);
-        when(starshipService.calculateFastestTransportByPerson(person)).thenReturn(null);
+        when(vehicleService.calculateFastestTransportByPerson(person))
+                .thenReturn(null);
 
-        FilmList filmObjectList = new FilmList();
-        Film film = new Film();
-        film.setTitle("A New Hope");
-        film.setRelease_date("1977-05-25");
-        film.setUrl("filmUri");
-        filmObjectList.setResults(Collections.singletonList(film));
-        when(filmService.getFilms()).thenReturn(filmObjectList);
+        when(starshipService.calculateFastestTransportByPerson(person))
+                .thenReturn(null);
 
+        when(filmService.getFilms())
+                .thenReturn(filmObjectList);
 
-        PersonInfoResponse result = personService.getPersonInfo("Luke Skywalker");
+        PersonInfoResponse result =
+                personService.getPersonInfo(TestConstants.PERSON_NAME);
 
-        assertEquals("Luke Skywalker", result.getName());
-        assertEquals("19BBY", result.getBirthYear());
-        assertEquals("male", result.getGender());
-        assertEquals("Tatooine", result.getPlanetName());
-        assertEquals("A New Hope", result.getFilms().get(0).getName());
-        assertEquals("1977-05-25", result.getFilms().get(0).getReleaseDate());
+        assertEquals(TestConstants.PERSON_NAME, result.getName());
+        assertEquals(TestConstants.BIRTH_YEAR, result.getBirthYear());
+        assertEquals(TestConstants.GENDER, result.getGender());
+        assertEquals(TestConstants.PLANET_NAME, result.getPlanetName());
+        assertEquals(TestConstants.FILM_NAME, result.getFilms().get(0).getName());
+        assertEquals(TestConstants.RELEASE_DATE, result.getFilms().get(0).getReleaseDate());
+
         assertNull(result.getFastestVehicleDriven());
+
     }
+
 
     @Test
     public void should_throw_not_found_exception() {
 
-        when(swapiProxyService.getPersonByName("Unknown Person")).
+        when(swapiProxyService.getPersonByName(TestConstants.UNKNOWN_PERSON)).
                 thenReturn(PersonList.builder()
                         .results(new ArrayList<Person>())
                         .build());

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * <p>Controller class that provides an endpoint for initializing and preloading data from the SWAPI (Star Wars API).
  * The endpoint allows preloading of film data to enhance performance and responsiveness.
- * In future releases, this endpoint could be extended to load the entire Star Wars universe data. </p>
+ * In future releases, this endpoint could be extended to load the entire Star Wars universe data. </p> <br>
  * @author Francisco Mastucci
  * @version 1.0
  * @since 2023-08-12
