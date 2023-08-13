@@ -43,16 +43,11 @@ public class StarshipServiceTest {
     @Test
     public void should_return_the_same_uri() {
 
-        List<String> starships = new ArrayList<>();
-        starships.add(TestConstants.STARSHIP_URL);
-        Person person = Person.builder()
-                .starships(starships)
-                .build();
+        List<String> starships = List.of(TestConstants.STARSHIP_URL);
+        Person person = Person.builder().starships(starships).build();
 
-        when(swapiProxyService.getStarship(TestConstants.STARSHIP_URL)).thenReturn(
-                Starship.builder()
-                        .url(TestConstants.STARSHIP_URL)
-                        .build());
+        when(swapiProxyService.getStarship(TestConstants.STARSHIP_URL))
+                .thenReturn(TestUtils.getStarship());
 
         List<Starship> result = starshipService.getTransportInfo(person);
 

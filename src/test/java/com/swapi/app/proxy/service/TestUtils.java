@@ -9,50 +9,56 @@ import java.util.List;
 public class TestUtils {
 
     public static PersonList getPersonList(Person person) {
-        PersonList personList = new PersonList();
-        personList.setResults(Collections.singletonList(person));
-
-        return personList;
+        return PersonList.builder()
+                .results(Collections.singletonList(person))
+                .build();
     }
 
     public static Person getPerson() {
-        List<String> filmList = getfilmStringList();
-
-        Person person = Person.builder()
+        return Person.builder()
                 .name(TestConstants.PERSON_NAME)
                 .birth_year(TestConstants.BIRTH_YEAR)
                 .gender(TestConstants.GENDER)
                 .vehicles(new ArrayList<>())
-                .films(filmList)
+                .films(getfilmStringList())
                 .homeworld(TestConstants.PLANET_URL)
                 .build();
-
-        return person;
     }
 
     private static List<String> getfilmStringList() {
-        List<String> filmList = new ArrayList<>();
-        filmList.add(TestConstants.FILM_URL);
-        return filmList;
+        return List.of(TestConstants.FILM_URL);
     }
 
     public static Planet getPlanet() {
-        Planet planet = Planet.builder()
-                        .name(TestConstants.PLANET_NAME).build();
-        return planet;
+       return  Planet.builder()
+               .name(TestConstants.PLANET_NAME)
+               .build();
     }
 
     public static FilmList getFilmList() {
-        FilmList filmObjectList = new FilmList();
-        Film film = Film.builder()
+        return  FilmList.builder()
+                .results(Collections.singletonList(getFilm()))
+                .build();
+    }
+
+    private static Film getFilm() {
+        return Film.builder()
                 .title(TestConstants.FILM_NAME)
                 .release_date(TestConstants.RELEASE_DATE)
                 .url(TestConstants.FILM_URL)
                 .build();
+    }
 
-        filmObjectList.setResults(Collections.singletonList(film));
+    public static Vehicle getVehicle() {
+        return Vehicle.builder()
+                .url(TestConstants.VEHICLE_URL)
+                .build();
+    }
 
-        return filmObjectList;
+    public static Starship getStarship() {
+        return Starship.builder()
+                .url(TestConstants.STARSHIP_URL)
+                .build();
     }
 
 }

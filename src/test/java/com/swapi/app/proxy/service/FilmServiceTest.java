@@ -26,7 +26,7 @@ public class FilmServiceTest {
     @Test
     public void should_return_a_film_list() {
 
-        FilmList expectedFilmList = new FilmList();
+        FilmList expectedFilmList = TestUtils.getFilmList();
         when(swapiProxyService.getFilms()).thenReturn(expectedFilmList);
 
         FilmList result = filmService.getFilms();

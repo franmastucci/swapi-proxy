@@ -26,8 +26,9 @@ class PlanetServiceTest {
     @Test
     public void should_return_a_planet() {
 
-        Planet expectedPlanet = new Planet();
-        when(swapiProxyService.getPlanet(TestConstants.PLANET_URL)).thenReturn(expectedPlanet);
+        Planet expectedPlanet = TestUtils.getPlanet();
+        when(swapiProxyService.getPlanet(TestConstants.PLANET_URL))
+                .thenReturn(expectedPlanet);
 
         Planet result = planetService.getPlanet(TestConstants.PLANET_URL);
 

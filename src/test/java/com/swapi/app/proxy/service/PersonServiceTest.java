@@ -44,8 +44,9 @@ public class PersonServiceTest {
                 planetService
         );
     }
+
     @Test
-    public void should_return_a_person_info_response() {
+    public void should_return_a_person_info_response_without_max_speed() {
 
         Person person = TestUtils.getPerson();
 
@@ -62,7 +63,7 @@ public class PersonServiceTest {
                 .thenReturn(planet);
 
         when(swapiProxyService.getVehicle(TestConstants.VEHICLE_URL))
-                .thenReturn(Vehicle.builder().url(TestConstants.VEHICLE_URL).build());
+                .thenReturn(TestUtils.getVehicle());
 
         when(vehicleService.calculateFastestTransportByPerson(person))
                 .thenReturn(null);
@@ -97,7 +98,7 @@ public class PersonServiceTest {
                         .build());
 
         assertThrows(NotFoundException.class,
-                () -> personService.getPersonInfo("Unknown Person"));
+                () -> personService.getPersonInfo(TestConstants.UNKNOWN_PERSON));
 
     }
 
