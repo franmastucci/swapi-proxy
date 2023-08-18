@@ -1,4 +1,4 @@
-package com.swapi.app.proxy.dto.swapi;
+package com.swapi.app.proxy.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,24 +11,30 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public  class StarshipApiResponse {
+public class Starship implements Transport {
+
     private String name;
     private String model;
     private String manufacturer;
-    private String costInCredits;
+    private String cost_in_credits;
     private String length;
-    private String maxAtmospheringSpeed;
+    private String max_atmosphering_speed;
     private String crew;
     private String passengers;
-    private String cargoCapacity;
+    private String cargo_capacity;
     private String consumables;
-    private String hyperdriveRating;
+    private String hyperdrive_rating;
     private String MGLT;
-    private String starshipClass;
+    private String starship_class;
     private List<String> pilots;
     private List<String> films;
     private String created;
     private String edited;
     private String url;
+
+    @Override
+    public String getMax_atmosphering_speed() {
+        return max_atmosphering_speed;
+    }
 
 }

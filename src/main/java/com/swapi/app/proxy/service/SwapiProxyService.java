@@ -1,8 +1,8 @@
 package com.swapi.app.proxy.service;
 
-import com.swapi.app.proxy.dto.proxy.FilmResponse;
-import com.swapi.app.proxy.dto.proxy.PersonInfoResponse;
-import com.swapi.app.proxy.dto.swapi.*;
+import com.swapi.app.proxy.entity.*;
+import com.swapi.app.proxy.exception.InternalProxyException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -10,114 +10,81 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+/**
+ * <h1>SWAPI Proxy Service</h1>
+ *
+ * <p>The SWAPI Proxy Service acts as an intermediary for consuming the SWAPI (Star Wars API),
+ * providing an abstraction layer to access different types of data related to the
+ * Star Wars universe. </p>
+ *
+ * <br><p>This service offers methods to retrieve information about movies, characters, planets, starships,
+ * and vehicles from the Star Wars saga.</p>
+ *
+ * <p>It uses WebClient to make requests to the SWAPI and handles caching to improve performance.
+ * Cached data is stored under the following cache names: "films-swapi", "person-by-name-swapi",
+ * "planet-swapi", "starship-swapi", and "vehicle-swapi". Caching helps reduce the number of
+ * API requests and enhances responsiveness. </p>
+ *
+ * <br><p>To use this service, simply inject an instance of {@code SwapiProxyService} and use
+ * the provided methods to retrieve the data you need from the Star Wars universe.</p> <br>
+ *
+ * @author Francisco Mastucci
+ * @version 1.0
+ * @since 2023-08-12
+ */
 
 @Service
+@Log4j2
 public class SwapiProxyService {
 
     @Autowired
-    private ContextService contextService;
+    private WebClient webClient;
+
+    @Value("${external-api-swapi-films}")
+    private String swapiFilmsUrl;
+
+    @Value("${external-api-swapi-people-by-name}")
+    private String swapiPeopleByIdUrl;
 
 
-    @Cacheable("person-info")
-    public PersonInfoResponse getPersonInfo(String name) {
-
-        PersonInfoApiResponse personInfo =
-                getPersonInfoApiResponseEntity(name, contextService.getPeople());
-
-        if (personInfo == null)
-            throw new RuntimeException("Not Found");
-
-        return buildPersonInfoResponse(personInfo);
-
+    @Cacheable("films-swapi")
+    public FilmList getFilms() {
+        return getDataFromSwapi(swapiFilmsUrl, FilmList.class).getBody();
     }
 
-    private PersonInfoApiResponse getPersonInfoApiResponseEntity(String name, PersonInfoListApiResponse peopleList) {
+    @Cacheable("person-by-name-swapi")
+    public PersonList getPersonByName(String name) {
+        return getDataFromSwapi(swapiPeopleByIdUrl + name, PersonList.class).getBody();
+    }
 
-        boolean haveNextPage = null != peopleList.getNext();
+    @Cacheable("planet-swapi")
+    public Planet getPlanet(String url) {
+        return getDataFromSwapi(url, Planet.class).getBody();
+    }
 
-        PersonInfoApiResponse personInfo = peopleList.getResults().stream()
-                .filter(p -> p.getName().equals(name))
-                .findFirst()
-                .orElse(null);
+    @Cacheable("starship-swapi")
+    public Starship getStarship(String url) {
+        return getDataFromSwapi(url, Starship.class).getBody();
+    }
 
-        if (personInfo == null && haveNextPage) {
-            PersonInfoApiResponse recursiveResult =
-                    getPersonInfoApiResponseEntity(name, contextService.getPeople(peopleList.getNext()));
+    @Cacheable("vehicle-swapi")
+    public Vehicle getVehicle(String url) {
+        return getDataFromSwapi(url, Vehicle.class).getBody();
+    }
 
-            if (recursiveResult != null)
-                return recursiveResult;
+    public <T> ResponseEntity<T> getDataFromSwapi(String uri, Class<T> responseType) {
 
+        try {
+            return webClient.get()
+                    .uri(uri)
+                    .retrieve()
+                    .toEntity(responseType)
+                    .block();
+
+        } catch (Exception e) {
+            log.error("unexpected error getting data from Swapi. Stack Trace: " + e.getStackTrace());
+            throw new InternalProxyException("unexpected error getting data from Swapi");
         }
-
-        return personInfo;
-    }
-    private PersonInfoResponse buildPersonInfoResponse(PersonInfoApiResponse personInfo) {
-
-        return PersonInfoResponse.builder()
-                .name(personInfo.getName())
-                .birthYear(personInfo.getBirth_year())
-                .gender(personInfo.getGender())
-                .planetName(getPlanetName(personInfo))
-                .fastestVehicleDriven(getVehicleWithMaxSpeed(personInfo))
-                .films(getFilms(personInfo))
-                .build();
-
-    }
-
-    private List<FilmResponse> getFilms(PersonInfoApiResponse responseBody) {
-
-        FilmListApiResponse swapiFilmList = contextService.getFilms();
-
-        List<FilmResponse> filmsInfoResponse = new ArrayList<>();
-
-        responseBody.getFilms()
-                .stream().forEach(f -> {
-                    swapiFilmList.getResults().stream().forEach(g -> {
-                        if(g.getUrl().equals(f)) {
-                            filmsInfoResponse.add(FilmResponse.builder()
-                                    .name(g.getTitle())
-                                    .releaseDate(g.getRelease_date())
-                                    .build());
-                        }
-                    });
-                });
-
-        return filmsInfoResponse;
-
-    }
-
-    private String getVehicleWithMaxSpeed(PersonInfoApiResponse responseBody) {
-
-        List<VehicleApiResponse> vehiclesInfo = contextService.getVehicles().getResults();
-
-        List<VehicleApiResponse> filteredVehiclesInfo = new ArrayList<>();
-
-        responseBody.getVehicles()
-                .stream().forEach(v -> {
-
-                    vehiclesInfo.stream().forEach(w -> {
-                        if(w.getUrl().equals(v))
-                            filteredVehiclesInfo.add(w);
-                    });
-                });
-
-        Optional<VehicleApiResponse> vehicleWithMaxSpeed = filteredVehiclesInfo.stream()
-                .max(Comparator.comparingInt(veh -> Integer.parseInt(veh.getMax_atmosphering_speed())));
-
-        if(vehicleWithMaxSpeed.isEmpty()) return null;
-        return vehicleWithMaxSpeed.get().getName();
-
-    }
-
-    private String getPlanetName(PersonInfoApiResponse responseBody) {
-
-        return contextService.getPlanets().getResults().stream()
-                .filter(p -> p.getUrl().equals(responseBody.getHomeworld()))
-                .findFirst().get().getName();
 
     }
 

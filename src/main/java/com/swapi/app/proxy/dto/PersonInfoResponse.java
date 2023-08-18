@@ -1,4 +1,4 @@
-package com.swapi.app.proxy.dto.proxy;
+package com.swapi.app.proxy.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

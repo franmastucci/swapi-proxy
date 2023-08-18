@@ -1,4 +1,4 @@
-package com.swapi.app.proxy.dto.swapi;
+package com.swapi.app.proxy.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +11,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PersonInfoListApiResponse {
+public class VehicleList {
+
     private int count;
     private String next;
     private String previous;
-    private List<PersonInfoApiResponse> results;
+    private List<Vehicle> results;
+
 }
+

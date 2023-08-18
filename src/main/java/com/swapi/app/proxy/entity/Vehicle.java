@@ -1,4 +1,4 @@
-package com.swapi.app.proxy.dto.swapi;
+package com.swapi.app.proxy.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class VehicleApiResponse {
+public class Vehicle implements Transport {
+
     private String cargo_capacity;
     private String consumables;
     private String cost_in_credits;
@@ -28,5 +29,10 @@ public class VehicleApiResponse {
     private List<String> films;
     private String url;
     private String vehicle_class;
+
+    @Override
+    public String getMax_atmosphering_speed() {
+        return max_atmosphering_speed;
+    }
 
 }

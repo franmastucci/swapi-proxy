@@ -1,4 +1,4 @@
-package com.swapi.app.proxy.dto.swapi;
+package com.swapi.app.proxy.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PersonInfoApiResponse {
+public class Person {
+
     private String name;
     private String height;
     private String mass;
@@ -28,4 +29,5 @@ public class PersonInfoApiResponse {
     private String created;
     private String edited;
     private String url;
+
 }
