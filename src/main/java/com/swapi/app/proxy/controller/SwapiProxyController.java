@@ -44,4 +44,10 @@ public class SwapiProxyController {
 
     }
 
+    @GetMapping(path = "health")
+    @Operation(summary = "Initialize the SWAPI data.")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("ok");
+    }
+
 }
